@@ -1,0 +1,3 @@
+com\solveria\iamservice\architecture\IamArchitectureTest.class
+com\solveria\iamservice\contract\AssignPermissionsToRoleContractTest.class
+com\solveria\iamservice\pact\AssignPermissionsToRoleProviderPactTest.class
