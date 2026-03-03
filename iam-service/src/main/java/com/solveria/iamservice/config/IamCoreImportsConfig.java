@@ -4,6 +4,8 @@ import com.solveria.core.iam.application.port.PermissionRepositoryPort;
 import com.solveria.core.iam.application.port.RoleRepositoryPort;
 import com.solveria.core.iam.infrastructure.persistence.adapter.PermissionRepositoryAdapter;
 import com.solveria.core.iam.infrastructure.persistence.adapter.RoleRepositoryAdapter;
+import com.solveria.core.iam.infrastructure.persistence.mapper.PermissionJpaMapper;
+import com.solveria.core.iam.infrastructure.persistence.mapper.RoleJpaMapper;
 import com.solveria.core.iam.infrastructure.persistence.repository.PermissionJpaRepository;
 import com.solveria.core.iam.infrastructure.persistence.repository.RoleJpaRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,15 +26,29 @@ import org.springframework.context.annotation.Configuration;
 public class IamCoreImportsConfig {
 
     @Bean
+    @ConditionalOnMissingBean(RoleJpaMapper.class)
+    public RoleJpaMapper roleJpaMapper() {
+        return new RoleJpaMapper();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(PermissionJpaMapper.class)
+    public PermissionJpaMapper permissionJpaMapper() {
+        return new PermissionJpaMapper();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(RoleRepositoryPort.class)
-    public RoleRepositoryPort roleRepositoryPort(RoleJpaRepository roleJpaRepository) {
-        return new RoleRepositoryAdapter(roleJpaRepository);
+    public RoleRepositoryPort roleRepositoryPort(
+            RoleJpaRepository roleJpaRepository, RoleJpaMapper roleJpaMapper) {
+        return new RoleRepositoryAdapter(roleJpaRepository, roleJpaMapper);
     }
 
     @Bean
     @ConditionalOnMissingBean(PermissionRepositoryPort.class)
     public PermissionRepositoryPort permissionRepositoryPort(
-            PermissionJpaRepository permissionJpaRepository) {
-        return new PermissionRepositoryAdapter(permissionJpaRepository);
+            PermissionJpaRepository permissionJpaRepository,
+            PermissionJpaMapper permissionJpaMapper) {
+        return new PermissionRepositoryAdapter(permissionJpaRepository, permissionJpaMapper);
     }
 }
