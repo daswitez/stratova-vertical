@@ -17,7 +17,7 @@ This workspace contains 3 repositories for the Solveria platform:
 
 ### 3. `ai-service/` (AI Service)
 - **Purpose:** LLM completions, RAG, vector search microservice
-- **Tech:** Spring Boot 3.4.0, Java 21, Spring AI, OpenAI, PgVector, MongoDB Atlas
+- **Tech:** Spring Boot 3.4.0, Java 21, Spring AI, PgVector, MongoDB, Redis
 - **Port:** 8091 (default)
 - **Architecture:** Clean Architecture (domain/application/infrastructure/api/bootstrap)
 

@@ -7,14 +7,15 @@
 - [ ] **AI-01: Integración Base con LLM (Ej. OpenAI)**
   - Configurar conectores base usando Spring AI.
   - Implementar lógica de fallback e inyección segura del `API_KEY`.
-- [ ] **AI-02: Configuración de Base de Datos Vectorial (PgVector / MongoDB Atlas Vector Search)**
-  - Configurar infraestructura para almacenamiento de embeddings.
+- [ ] **AI-02: Configuración de Base de Datos Vectorial (PgVector)**
+  - Configurar infraestructura local en Docker para almacenamiento de embeddings.
   - Desarrollar servicios de carga de documentos (ETL básico) y chunking semántico.
 - [ ] **AI-03: Implementación de Retrieval-Augmented Generation (RAG)**
   - Crear motor de búsqueda de similitud sobre la Vector DB conectada al generador LLM.
   - Funcionalidad para inyectar "Datos Reales Actualizados" como contexto del RAG.
-- [ ] **AI-04: Gestión de Memoria de Contexto (Context Memory)**
-  - Crear estructura temporal/permanente para que el LLM "recuerde" y almacene el historial de decisiones por Simulación/Usuario.
+- [ ] **AI-04: Gestión de Memoria de Contexto (MongoDB y Redis)**
+  - Utilizar Redis para la memoria a corto plazo (Short-Term Context Window) de las conversaciones activas.
+  - Utilizar MongoDB para almacenar el historial de decisiones permanente y el estado central por Simulación/Usuario.
 - [ ] **AI-05: Streaming de Respuestas**
   - Implementar Server-Sent Events (SSE) o WebSockets para emitir respuestas de los agentes en tiempo real hacia el front-end a medida que el LLM genera la inferencia.
 - [ ] **AI-06: Control de Costos y Rate Limiting de IA**

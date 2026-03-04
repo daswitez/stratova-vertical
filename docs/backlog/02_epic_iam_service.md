@@ -4,8 +4,9 @@
 
 ## Tareas (User Stories / Tasks)
 
-- [ ] **IAM-01: Modelo de Datos de Identidad**
-  - Diseñar entidades de Base de Datos para `User`, `Role`, `Permission`, `Tenant` y `OrganizationGroup` (para holdings/universidades).
+- [ ] **IAM-01: Modelo de Datos de Identidad (PostgreSQL)**
+  - Diseñar entidades de Base de Datos relacional para `User`, `Role`, `Permission`, `Tenant` y `OrganizationGroup` (para holdings/universidades).
+  - Configurar migraciones con Liquibase o Flyway.
 - [ ] **IAM-02: Autenticación (Login / Registro)**
   - Implementar endpoint de Login con generación de JWT.
   - Implementar flujo de Registro con validación de email.

@@ -25,3 +25,7 @@
   - Interfaces y DTOs base de paginación y ordenamiento.
 - [ ] **CORE-07: Testing y Arquitectura (ArchUnit)**
   - Definir reglas estrictas de Clean Architecture usando ArchUnit para que sean heredadas/aplicadas por los servicios.
+- [ ] **CORE-08: Capa de Caché y Rate Limiting (Redis)**
+  - Integrar conectores base para Redis (Spring Data Redis).
+  - Implementar manejo de caché a nivel de Gateway o Core para Rate Limiting de APIs de IA.
+  - Proveer interfaces genéricas para Distributed Locks (Mutex) que eviten condiciones de carrera entre agentes.

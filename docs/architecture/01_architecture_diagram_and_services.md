@@ -29,6 +29,8 @@ graph TD
         AI -.->|Lee/Escribe Decisión| DB_CENTRAL
         SIM -.->|Consulta RAG| VDB[(PgVector \n Contexto Mercado)]
         AI -.->|Consulta RAG| VDB
+        API_GW -.->|Rate Limit & Auth Cache| CACHE[(Redis \n Short-term / Locks)]
+        AI -.->|Short-term Context| CACHE
     end
     
     %% IA Externa (LLMs)
