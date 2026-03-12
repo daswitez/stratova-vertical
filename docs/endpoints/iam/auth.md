@@ -1,8 +1,24 @@
 # IAM Service Authentication Endpoints
 
-These endpoints are used for registering new users and logging in to the system to get a JWT token. They can be imported into Postman or run via command line.
+These endpoints are used for administrative login and session bootstrap. Public self-registration is disabled.
 
 **Base URL**: `http://localhost:8080/api/v1/auth`
+
+## Current Auth Behavior
+
+- `POST /api/v1/auth/register` is disabled for public use and returns `403 FORBIDDEN`.
+- Users must be created by an authenticated administrator.
+- In local `dev`, the service bootstraps a default platform admin on startup.
+- `POST /api/v1/auth/login` remains the active entry point for existing users.
+
+### Default local bootstrap admin
+
+When running with profile `dev`, the service creates this admin automatically if it does not exist:
+
+- `email`: `admin@solveria.local`
+- `password`: `Admin12345!`
+- role: `PLATFORM_ADMIN`
+- `userCategory`: `ACADEMIC_ADMIN`
 
 ## Current Multi-Tenant Behavior
 
@@ -26,11 +42,9 @@ The service now uses an academic-first multi-tenant model.
 - `FOUNDER`
 - `EXECUTIVE`
 
-## 1. Register User
+## 1. Public Register
 
-Creates a new user account with multi-tenant support.
-- `tenantId` is optional.
-- For the academic MVP, the recommended pattern is to register the user against the most specific academic tenant available, for example a `PROGRAM` tenant such as `adm-sis-umsa`.
+Public registration is intentionally blocked.
 
 ### cURL
 
@@ -46,47 +60,12 @@ curl -X POST http://localhost:8080/api/v1/auth/register \
   }'
 ```
 
-### Alternative: create tenant on first register
-
-```bash
-curl -X POST http://localhost:8080/api/v1/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "docente.mkt",
-    "email": "docente.mkt@ucb.edu.bo",
-    "password": "SecurePass123",
-    "userCategory": "PROFESSOR",
-    "tenantId": "marketing-ucb",
-    "tenantName": "Marketing UCB"
-  }'
-```
-
-### Expected Response Shape
+### Expected Response
 
 ```json
 {
-  "token": "<JWT>",
-  "user": {
-    "id": 1,
-    "username": "juan.perez",
-    "email": "juan.perez@umsa.bo",
-    "primaryTenantId": "11111111-1111-1111-1111-111111111111",
-    "userCategory": "STUDENT",
-    "roles": ["STUDENT"]
-  },
-  "context": {
-    "activeTenantId": "11111111-1111-1111-1111-111111111111",
-    "memberships": [
-      {
-        "tenantId": "11111111-1111-1111-1111-111111111111",
-        "tenantCode": "adm-sis-umsa",
-        "tenantName": "Administracion de Sistemas UMSA",
-        "tenantType": "PROGRAM",
-        "membershipType": "PRIMARY"
-      }
-    ],
-    "teamCompetitions": []
-  }
+  "errorCode": "FORBIDDEN",
+  "message": "Public registration is disabled. An authenticated administrator must create users."
 }
 ```
 
@@ -102,57 +81,37 @@ Authenticates returning a JWT token that you can pass as a `Bearer` token in the
 curl -X POST http://localhost:8080/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "juan.perez@umsa.bo",
-    "password": "SecurePass123"
+    "email": "admin@solveria.local",
+    "password": "Admin12345!"
   }'
 ```
 
 ### Expected Response Shape
 
-If the user already belongs to a team in a competition, `teamCompetitions` is returned as part of the context:
+If the user already belongs to tenants, teams, or platform roles, that context is returned in the response:
 
 ```json
 {
   "token": "<JWT>",
   "user": {
     "id": 1,
-    "username": "juan.perez",
-    "email": "juan.perez@umsa.bo",
-    "primaryTenantId": "11111111-1111-1111-1111-111111111111",
-    "userCategory": "STUDENT",
-    "roles": ["STUDENT"]
+    "username": "platform.admin",
+    "email": "admin@solveria.local",
+    "primaryTenantId": null,
+    "userCategory": "ACADEMIC_ADMIN",
+    "roles": ["ACADEMIC_ADMIN", "PLATFORM_ADMIN"]
   },
   "context": {
-    "activeTenantId": "11111111-1111-1111-1111-111111111111",
-    "memberships": [
-      {
-        "tenantId": "11111111-1111-1111-1111-111111111111",
-        "tenantCode": "adm-sis-umsa",
-        "tenantName": "Administracion de Sistemas UMSA",
-        "tenantType": "PROGRAM",
-        "membershipType": "PRIMARY"
-      }
-    ],
-    "teamCompetitions": [
-      {
-        "teamId": "66666666-6666-6666-6666-666666666666",
-        "teamCode": "team-andes",
-        "teamName": "Team Andes",
-        "memberRole": "CAPTAIN",
-        "competitionId": "55555555-5555-5555-5555-555555555555",
-        "competitionCode": "coresim-2026-s1",
-        "competitionName": "CoreSim 2026 Semestre 1",
-        "competitionScope": "CROSS_TENANT",
-        "academicCycleCode": "2026-S1",
-        "originTenantId": "11111111-1111-1111-1111-111111111111"
-      }
-    ]
+    "activeTenantId": null,
+    "memberships": [],
+    "teamCompetitions": []
   }
 }
 ```
 
 ## Notes
 
-- At the moment there are no REST admin endpoints yet for creating tenants, cycles, competitions, or teams.
+- At the moment there are no protected REST admin endpoints yet for creating users, tenants, cycles, competitions, or teams.
+- The default bootstrap admin exists only to close public registration and provide a controlled operator account while admin CRUDs are being implemented.
 - To test the full academic context with real data today, seed PostgreSQL directly. See:
   - `iam-service/docs/api/multi-tenant-real-data-testing.md`
